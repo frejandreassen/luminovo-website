@@ -10,15 +10,15 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Luminovo - AI Design Studio | Create Your Perfect Lamp in 3 Minutes",
-  description: "Revolutionary AI Design Studio creates unique, personalized lighting that matches your exact vision. From concept to creation in minutes, not months.",
-  keywords: "AI design, custom lighting, lamp design, interior design, Scandinavian design, smart lighting",
+  title: "Luminovo - Skandinavisk Lyxbelysning | Handgjorda Geometriska Lampor",
+  description: "Exklusiv kollektion av handgjorda geometriska lampor inspirerade av skandinavisk design. Upptäck våra unika ljusskulpturer som skapar varm och mysig atmosfär.",
+  keywords: "skandinavisk design, lyxlampor, geometriska lampor, handgjord belysning, svensk design, inredning",
   authors: [{ name: "Luminovo" }],
   openGraph: {
-    title: "Luminovo - AI Design Studio",
-    description: "Create your perfect lamp in 3 minutes with AI",
+    title: "Luminovo - Skandinavisk Lyxbelysning",
+    description: "Handgjorda geometriska lampor i skandinavisk design",
     type: "website",
-    locale: "en_US",
+    locale: "sv_SE",
   },
 };
 
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="sv">
       <body className={`${poppins.variable} antialiased`}>
         {children}
       </body>

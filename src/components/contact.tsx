@@ -111,16 +111,16 @@ export const Contact: React.FC<ContactProps> = ({ className = '' }) => {
             {/* Right Column - Newsletter Signup */}
             <div className="bg-gray-50 rounded-3xl p-8">
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold mb-4">Stay Updated</h3>
+                <h3 className="text-2xl font-bold mb-4">Håll dig uppdaterad</h3>
                 <p className="text-gray-600">
-                  Subscribe to our newsletter for the latest design trends, AI innovations, and exclusive early access to new features.
+                  Prenumerera på vårt nyhetsbrev för de senaste designtrenderna, nya kollektioner och exklusiva erbjudanden.
                 </p>
               </div>
 
               <form onSubmit={handleSubscribe} className="space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
+                    E-postadress
                   </label>
                   <input
                     type="email"
@@ -129,7 +129,7 @@ export const Contact: React.FC<ContactProps> = ({ className = '' }) => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-terracotta focus:border-transparent transition-all"
-                    placeholder="Enter your email"
+                    placeholder="Ange din e-postadress"
                     disabled={isLoading || isSubmitted}
                   />
                 </div>
@@ -145,24 +145,24 @@ export const Contact: React.FC<ContactProps> = ({ className = '' }) => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Subscribing...
+                      Prenumererar...
                     </span>
                   ) : isSubmitted ? (
                     <span className="flex items-center justify-center">
                       <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                      Successfully Subscribed!
+                      Prenumeration lyckades!
                     </span>
                   ) : (
-                    'Subscribe to Newsletter'
+                    'Prenumerera på nyhetsbrev'
                   )}
                 </button>
               </form>
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-500">
-                  We respect your privacy. Unsubscribe at any time.
+                  Vi respekterar din integritet. Avprenumerera när som helst.
                 </p>
               </div>
             </div>

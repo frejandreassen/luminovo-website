@@ -4,11 +4,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Custom Luminovo Colors */
-  --color-brand-sand: #f1e9e0;
-  --color-brand-black: #1a1a1a;
-  --color-brand-terracotta: #b97b5e;
-  --color-brand-ochre: #E6A05D;
+  /* Custom Luminovo Colors - Scandinavian Palette */
+  --color-brand-sand: #f7f3f0;
+  --color-brand-black: #2c2c2c;
+  --color-brand-terracotta: #c88b6e;
+  --color-brand-ochre: #d4a574;
+  --color-brand-warm-white: #fefbf8;
+  --color-brand-stone: #e8e3df;
 
   /* Background and foreground */
   --color-background: var(--background);
@@ -62,8 +64,8 @@ html {
 
 :root {
   --radius: 0.625rem;
-  --background: #f1e9e0;
-  --foreground: #1a1a1a;
+  --background: #f7f3f0;
+  --foreground: #2c2c2c;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -96,8 +98,8 @@ html {
 }
 
 .dark {
-  --background: #1a1a1a;
-  --foreground: #f1e9e0;
+  --background: #2c2c2c;
+  --foreground: #f7f3f0;
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);

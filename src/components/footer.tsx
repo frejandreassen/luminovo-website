@@ -5,29 +5,29 @@ import { Logotype } from './logo'
 
 const footerSections = [
   {
-    title: 'Product',
+    title: 'Produkter',
     links: [
-      { name: 'AI Design Studio', href: '#' },
-      { name: 'Gallery', href: '#' },
-      { name: 'Pricing', href: '#pricing' },
-      { name: 'Materials', href: '#' },
+      { name: 'Alla lampor', href: '#products' },
+      { name: 'Kollektioner', href: '#features' },
+      { name: 'Galleri', href: '#' },
+      { name: 'Material', href: '#' },
     ],
   },
   {
-    title: 'Support',
+    title: 'Service',
     links: [
-      { name: 'Help Center', href: '#' },
-      { name: 'Contact', href: '#contact' },
-      { name: 'Shipping', href: '#' },
-      { name: 'Returns', href: '#' },
+      { name: 'Kundservice', href: '#' },
+      { name: 'Kontakt', href: '#contact' },
+      { name: 'Leverans', href: '#' },
+      { name: 'Returer', href: '#' },
     ],
   },
   {
-    title: 'Company',
+    title: 'Företag',
     links: [
-      { name: 'About', href: '#' },
-      { name: 'Blog', href: '#' },
-      { name: 'Careers', href: '#' },
+      { name: 'Om oss', href: '#' },
+      { name: 'Hantverkare', href: '#' },
+      { name: 'Hållbarhet', href: '#' },
       { name: 'Press', href: '#' },
     ],
   },
@@ -55,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({ className = '' }) => {
           <div className="space-y-4">
             <Logotype variant="light" size="md" />
             <p className="text-gray-400">
-              Revolutionizing lighting design through AI innovation and craftsmanship.
+              Handgjorda skandinaviska lampor som förvandlar ditt hem med varm elegans.
             </p>
           </div>
 
@@ -91,14 +91,14 @@ export const Footer: React.FC<FooterProps> = ({ className = '' }) => {
         {/* Bottom Section */}
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-400">
-            © 2024 Luminovo. All rights reserved.
+            © 2024 Luminovo. Alla rättigheter förbehållna.
           </div>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-              Privacy
+              Integritet
             </a>
             <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-              Terms
+              Villkor
             </a>
             <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
               Cookies

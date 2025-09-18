@@ -2,22 +2,22 @@
 
 import React from 'react'
 
-const features = [
+const collections = [
   {
-    title: 'Neural Style Transfer',
-    description: 'Advanced AI analyzes millions of design patterns to create truly unique combinations.',
+    title: 'Handgjord Precision',
+    description: 'Varje lampa tillverkas för hand av svenska hantverkare med decennier av erfarenhet och passion för perfektion.',
   },
   {
-    title: 'Real-time 3D Rendering',
-    description: 'See your design come to life instantly with photorealistic rendering and materials.',
+    title: 'Hållbara Material',
+    description: 'Vi använder endast ekologiskt certifierat trä, återvunnen metall och energisnåla LED-lampor för framtidens belysning.',
   },
   {
-    title: 'AR Integration',
-    description: 'Preview your lamp in your actual space using augmented reality technology.',
+    title: 'Geometrisk Elegans',
+    description: 'Våra lampor kombinerar skandinavisk minimalism med geometriska former som skapar dramatiska ljuseffekter.',
   },
   {
-    title: 'Smart Manufacturing',
-    description: 'Direct-to-production pipeline ensures quality and reduces waste through precision automation.',
+    title: 'Svensk Hantverkstradition',
+    description: 'Varje design bygger på århundraden av svensk möbel- och designtradition, anpassad för moderna hem.',
   },
 ]
 
@@ -34,17 +34,17 @@ export const Features: React.FC<FeaturesProps> = ({ className = '' }) => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-4xl md:text-5xl font-bold">
-              Technology That
-              <span className="text-brand-terracotta block">Understands You</span>
+              Hantverkstradition
+              <span className="text-brand-terracotta block">Möter Modern Design</span>
             </h2>
 
             <div className="space-y-6">
-              {features.map((feature, index) => (
+              {collections.map((collection, index) => (
                 <div key={index} className="flex items-start space-x-4 group">
                   <div className="w-6 h-6 bg-brand-terracotta rounded-full flex-shrink-0 mt-1 group-hover:scale-110 transition-transform duration-300"></div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.description}</p>
+                    <h3 className="text-xl font-bold mb-2">{collection.title}</h3>
+                    <p className="text-gray-600">{collection.description}</p>
                   </div>
                 </div>
               ))}
@@ -56,19 +56,37 @@ export const Features: React.FC<FeaturesProps> = ({ className = '' }) => {
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-brand-terracotta opacity-20 rounded-full"></div>
               <div className="space-y-6">
                 <div className="text-center">
-                  <h3 className="text-xl font-bold mb-4">Live Design Process</h3>
-                  <div className="bg-gray-900 rounded-xl p-4 text-left">
-                    <div className="flex items-center space-x-2 mb-3">
-                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    </div>
-                    <div className="font-mono text-sm text-green-400 space-y-1">
-                      <div>$ luminovo.ai --generate</div>
-                      <div className="text-gray-400">Analyzing style preferences...</div>
-                      <div className="text-gray-400">Generating 3D model...</div>
-                      <div className="text-gray-400">Optimizing materials...</div>
-                      <div className="text-green-400">✓ Design complete!</div>
+                  <h3 className="text-xl font-bold mb-4">Vårt Hantverkstillverkningsprocess</h3>
+                  <div className="bg-brand-sand rounded-xl p-6 text-left">
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-brand-terracotta rounded-full flex items-center justify-center text-white font-bold text-sm">1</div>
+                        <div>
+                          <h4 className="font-semibold text-gray-800">Design & Planering</h4>
+                          <p className="text-sm text-gray-600">Handritat skiss av våra designers</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-brand-terracotta rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
+                        <div>
+                          <h4 className="font-semibold text-gray-800">Material & Bearbetning</h4>
+                          <p className="text-sm text-gray-600">Handvalt trä och metall formas</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-brand-terracotta rounded-full flex items-center justify-center text-white font-bold text-sm">3</div>
+                        <div>
+                          <h4 className="font-semibold text-gray-800">Montering & Kvalitetskontroll</h4>
+                          <p className="text-sm text-gray-600">Noggrant monterad och testad</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-sm">✓</div>
+                        <div>
+                          <h4 className="font-semibold text-gray-800">Klar för leverans</h4>
+                          <p className="text-sm text-gray-600">Handpackad för säker transport</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

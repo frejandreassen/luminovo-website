@@ -44,31 +44,25 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <button
-              onClick={() => scrollToSection('how-it-works')}
+              onClick={() => scrollToSection('products')}
               className="text-gray-700 hover:text-brand-terracotta transition-colors duration-200 font-medium"
             >
-              How it Works
+              Lampor
             </button>
             <button
               onClick={() => scrollToSection('features')}
               className="text-gray-700 hover:text-brand-terracotta transition-colors duration-200 font-medium"
             >
-              Features
-            </button>
-            <button
-              onClick={() => scrollToSection('pricing')}
-              className="text-gray-700 hover:text-brand-terracotta transition-colors duration-200 font-medium"
-            >
-              Pricing
+              Kollektioner
             </button>
             <button
               onClick={() => scrollToSection('contact')}
               className="text-gray-700 hover:text-brand-terracotta transition-colors duration-200 font-medium"
             >
-              Contact
+              Kontakt
             </button>
             <button className="bg-brand-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium">
-              Sign In
+              Boka Visning
             </button>
           </div>
 
@@ -98,32 +92,26 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white/95 backdrop-blur-md border-b border-gray-200">
             <button
-              onClick={() => scrollToSection('how-it-works')}
+              onClick={() => scrollToSection('products')}
               className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-brand-terracotta hover:bg-gray-50 rounded-md w-full text-left"
             >
-              How it Works
+              Lampor
             </button>
             <button
               onClick={() => scrollToSection('features')}
               className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-brand-terracotta hover:bg-gray-50 rounded-md w-full text-left"
             >
-              Features
-            </button>
-            <button
-              onClick={() => scrollToSection('pricing')}
-              className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-brand-terracotta hover:bg-gray-50 rounded-md w-full text-left"
-            >
-              Pricing
+              Kollektioner
             </button>
             <button
               onClick={() => scrollToSection('contact')}
               className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-brand-terracotta hover:bg-gray-50 rounded-md w-full text-left"
             >
-              Contact
+              Kontakt
             </button>
             <div className="px-3 py-2">
               <button className="w-full bg-brand-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition-colors duration-200 font-medium">
-                Sign In
+                Boka Visning
               </button>
             </div>
           </div>
