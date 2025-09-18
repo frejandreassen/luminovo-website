@@ -36,7 +36,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ className = '' }) => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-12">
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <div key={step.number} className="text-center space-y-6 group">
               <div className="w-16 h-16 bg-brand-terracotta rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-2xl font-bold text-white">{step.number}</span>

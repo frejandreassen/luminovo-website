@@ -56,7 +56,7 @@ export const Pricing: React.FC<PricingProps> = ({ className = '' }) => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {pricingTiers.map((tier, index) => (
+          {pricingTiers.map((tier) => (
             <div
               key={tier.name}
               className={`border-2 rounded-3xl p-8 relative transition-all duration-300 hover:shadow-lg ${

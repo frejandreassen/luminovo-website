@@ -93,6 +93,7 @@ export const Hero: React.FC<HeroProps> = ({ className = '' }) => {
     }, 15000)
 
     return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep, selectedStyle])
 
   return (

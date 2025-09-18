@@ -48,7 +48,7 @@ export const Contact: React.FC<ContactProps> = ({ className = '' }) => {
             <span className="text-brand-terracotta block">Extraordinary?</span>
           </h2>
           <p className="text-xl mb-8 text-gray-300">
-            Join thousands of design enthusiasts who've discovered the future of custom lighting.
+            Join thousands of design enthusiasts who&apos;ve discovered the future of custom lighting.
           </p>
           <button
             onClick={scrollToTop}
@@ -73,7 +73,7 @@ export const Contact: React.FC<ContactProps> = ({ className = '' }) => {
                   Get in <span className="text-brand-terracotta">Touch</span>
                 </h2>
                 <p className="text-xl text-gray-600 mb-8">
-                  Have questions about our AI design process or need help with a custom project? We're here to help bring your vision to life.
+                  Have questions about our AI design process or need help with a custom project? We&apos;re here to help bring your vision to life.
                 </p>
               </div>
 
