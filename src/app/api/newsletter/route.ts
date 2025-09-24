@@ -32,21 +32,15 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         email: email,
         newsletter_subscribed: true,
-        date_updated: new Date().toISOString(),
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
       console.error('Directus error:', errorData);
-
-      // Kolla om e-posten redan finns
-      if (response.status === 400 && errorData.includes('duplicate')) {
-        return NextResponse.json(
-          { error: 'E-postadressen är redan registrerad' },
-          { status: 400 }
-        );
-      }
+      console.error('Status:', response.status);
+      console.error('URL check:', `${DIRECTUS_URL}/items/customers`);
+      console.error('Token exists:', !!DIRECTUS_TOKEN);
 
       return NextResponse.json(
         { error: 'Kunde inte registrera prenumeration' },

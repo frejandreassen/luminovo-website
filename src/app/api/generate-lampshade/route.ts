@@ -88,8 +88,9 @@ Svara ENDAST med den färdiga bildprompten på engelska, inget annat. Prompten s
     });
 
     // Extract the optimized prompt from the response
-    const optimizedPrompt = optimizationResponse.response?.text?.() ||
-                            optimizationResponse.candidates?.[0]?.content?.parts?.[0]?.text ||
+    const result = optimizationResponse;
+    const optimizedPrompt = result.text ||
+                            result.candidates?.[0]?.content?.parts?.[0]?.text ||
                             `Elegant 3D-printed table lampshade with ${userPrompt} style, maximum 40cm height and 30cm width, designed for E27 socket mounting system with integrated fixture attachment ring at base, ${selectedStyle}, creating intricate shadow play when illuminated, photographed on ${selectedEnvironment}, Scandinavian minimalist interior, warm 2700K light emanating through the translucent white biodegradable filament, professional product photography, soft natural lighting`;
 
     console.log('User input:', userPrompt);
@@ -121,7 +122,6 @@ Svara ENDAST med den färdiga bildprompten på engelska, inget annat. Prompten s
 
     let imageData: string | null = null;
     let mimeType: string = 'image/png';
-    let description = '';
 
     for await (const chunk of imageResponse) {
       if (!chunk.candidates || !chunk.candidates[0].content || !chunk.candidates[0].content.parts) {
@@ -132,8 +132,6 @@ Svara ENDAST med den färdiga bildprompten på engelska, inget annat. Prompten s
         const inlineData = chunk.candidates[0].content.parts[0].inlineData;
         imageData = inlineData.data || '';
         mimeType = inlineData.mimeType || 'image/png';
-      } else if (chunk.text) {
-        description += chunk.text;
       }
     }
 
