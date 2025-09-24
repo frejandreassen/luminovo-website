@@ -10,7 +10,7 @@ const products = [
 
 export function Gallery() {
   return (
-    <section className="py-24 px-6">
+    <section className="py-24 px-6" id="collection">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-light mb-6 tracking-wide">Våra Kreationer</h2>

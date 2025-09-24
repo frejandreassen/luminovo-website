@@ -1,8 +1,57 @@
 // app/page.tsx
+'use client';
+
 import LampDesignerHero from '@/components/lamp-designer-hero';
 import { Gallery } from '@/components/gallery';
+import { useState, FormEvent } from 'react';
 
 export default function Home() {
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+
+  const handleNewsletterSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!email) {
+      setMessage('Vänligen ange din e-postadress');
+      setMessageType('error');
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message || 'Tack för din prenumeration!');
+        setMessageType('success');
+        setEmail(''); // Rensa formuläret
+      } else {
+        setMessage(data.error || 'Något gick fel. Försök igen.');
+        setMessageType('error');
+      }
+    } catch (error) {
+      setMessage('Ett fel uppstod. Försök igen senare.');
+      setMessageType('error');
+      console.error('Newsletter error:', error);
+    } finally {
+      setIsLoading(false);
+      // Rensa meddelandet efter 5 sekunder
+      setTimeout(() => setMessage(''), 5000);
+    }
+  };
   return (
     <>
       {/* Header är nu en del av layout.tsx, men om du vill ha den här för att följa HTML-strukturen kan du lägga den här. 
@@ -52,7 +101,7 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-12 lg:gap-24 items-center">
               <div className="relative h-96 w-full">
                 <div className="absolute inset-0 bg-white rounded-xl shadow-2xl transform -rotate-2"></div>
-                <div className="absolute inset-0 bg-cover bg-center rounded-xl shadow-inner transform rotate-1" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDV4o_B9X5b_KP9CMfPx4POJotFLAA_JtKYPhakMsp2hcKQjb2GzAFDFSMsXYrppF5C20PW0PNijrFus-265LEvYhSHXISvSJnKFzSmJn1yi7x5-cTOaxziee6Tyx1OGda0JFp-hYlOYhhhVqbxqTlydCaeSG7zVHZEEHRMsgDw52GpgRjvwMdIWcazeIX8t5syyZDkH9gM35dCwv1-JjIwchucn5naDu64iIZCGe1UlmhIQH9-KIC2Ac8aAQNmkW58z-rPquZMGtPn')" }}>
+                <div className="absolute inset-0 bg-cover bg-center rounded-xl shadow-inner transform rotate-1" style={{ backgroundImage: "url('/philosophy-lamp.png')" }}>
                   <div className="absolute inset-0 bg-brand-sand opacity-30 mix-blend-multiply rounded-xl"></div>
                 </div>
               </div>
@@ -86,7 +135,7 @@ export default function Home() {
               </div>
               <div className="relative h-96 w-full md:order-1">
                 <div className="absolute inset-0 bg-white rounded-xl shadow-2xl transform rotate-2"></div>
-                <div className="absolute inset-0 bg-cover bg-center rounded-xl shadow-inner transform -rotate-1" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDV4o_B9X5b_KP9CMfPx4POJotFLAA_JtKYPhakMsp2hcKQjb2GzAFDFSMsXYrppF5C20PW0PNijrFus-265LEvYhSHXISvSJnKFzSmJn1yi7x5-cTOaxziee6Tyx1OGda0JFp-hYlOYhhhVqbxqTlydCaeSG7zVHZEEHRMsgDw52GpgRjvwMdIWcazeIX8t5syyZDkH9gM35dCwv1-JjIwchucn5naDu64iIZCGe1UlmhIQH9-KIC2Ac8aAQNmkW58z-rPquZMGtPn')" }}>
+                <div className="absolute inset-0 bg-cover bg-center rounded-xl shadow-inner transform -rotate-1" style={{ backgroundImage: "url('/sustainability-lamp.png')" }}>
                   <div className="absolute inset-0 bg-brand-sand opacity-30 mix-blend-multiply rounded-xl"></div>
                 </div>
               </div>
@@ -99,9 +148,29 @@ export default function Home() {
           <div className="container mx-auto px-4 py-16 text-center">
             <h2 className="text-3xl lg:text-4xl font-semibold mb-4">Gå med i Luminovo-gemenskapen</h2>
             <p className="text-lg max-w-2xl mx-auto mb-8">Var först med att se nya designer, få exklusiva erbjudanden och upptäck inspiration för medvetet boende.</p>
-            <form className="max-w-md mx-auto flex">
-              <input className="w-full rounded-l-full py-3 px-6 text-brand-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-ochre" placeholder="Din e-postadress" type="email" />
-              <button className="bg-brand-black text-white font-semibold py-3 px-8 rounded-r-full hover:bg-gray-800 transition-colors" type="submit">Prenumerera</button>
+            <form className="max-w-md mx-auto flex flex-col gap-4" onSubmit={handleNewsletterSubmit}>
+              <div className="flex">
+                <input
+                  className="w-full rounded-l-full py-3 px-6 text-brand-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-ochre"
+                  placeholder="Din e-postadress"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                />
+                <button
+                  className="bg-brand-black text-white font-semibold py-3 px-8 rounded-r-full hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Skickar...' : 'Prenumerera'}
+                </button>
+              </div>
+              {message && (
+                <p className={`text-sm ${messageType === 'success' ? 'text-green-100' : 'text-yellow-100'}`}>
+                  {message}
+                </p>
+              )}
             </form>
           </div>
         </section>

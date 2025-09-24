@@ -28,8 +28,9 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">3. Ångerrätt och returer</h2>
             <p>
-              14 dagars ångerrätt gäller enligt svensk lag. Specialbeställda och kundanpassade produkter omfattas
-              inte av ångerrätten. Produkten måste returneras i oskadat skick.
+              14 dagars ångerrätt gäller för lagerprodukter enligt distansavtalslagen. Specialbeställda och
+              kundanpassade produkter (3D-printade lampor efter kundens önskemål) omfattas inte av ångerrätten
+              enligt lag (2005:59) om distansavtal. För lagerprodukter måste varan returneras i oskadat skick.
             </p>
           </section>
 
