@@ -1,4 +1,8 @@
+'use client';
+
 import Image from 'next/image'
+import { useState } from 'react';
+import OrderForm from './order-form';
 
 const products = [
   { id: 1, src: '/lampshade-1.png', alt: 'Geometrisk mesh-lampskärm' },
@@ -9,7 +13,16 @@ const products = [
 ]
 
 export function Gallery() {
+  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
+  const [selectedLamp, setSelectedLamp] = useState<typeof products[0] | null>(null);
+
+  const handleOrderClick = (product: typeof products[0]) => {
+    setSelectedLamp(product);
+    setIsOrderFormOpen(true);
+  };
+
   return (
+    <>
     <section className="py-24 px-6" id="collection">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
@@ -22,8 +35,8 @@ export function Gallery() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => (
-            <div key={product.id} className="group cursor-pointer">
-              <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-50">
+            <div key={product.id} className="group">
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-50 cursor-pointer">
                 <Image
                   src={product.src}
                   alt={product.alt}
@@ -31,12 +44,37 @@ export function Gallery() {
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
-              <h3 className="mt-4 text-lg font-light text-gray-800">{product.alt}</h3>
-              <p className="text-sm text-gray-500">Från 2.495 kr</p>
+              <div className="mt-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-light text-gray-800">{product.alt}</h3>
+                  <p className="text-sm text-gray-500">Från 2.495 kr</p>
+                </div>
+                <button
+                  onClick={() => handleOrderClick(product)}
+                  className="text-white text-sm font-semibold py-2 px-4 rounded-full transition-all"
+                  style={{ backgroundColor: '#1a1a1a' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#374151'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1a1a1a'}
+                >
+                  Beställ
+                </button>
+              </div>
             </div>
           ))}
         </div>
       </div>
     </section>
+
+    {/* Order Form Modal */}
+    <OrderForm
+      isOpen={isOrderFormOpen}
+      onClose={() => setIsOrderFormOpen(false)}
+      lampDetails={selectedLamp ? {
+        imageUrl: selectedLamp.src,
+        description: selectedLamp.alt,
+        isCustom: false,
+      } : undefined}
+    />
+    </>
   )
 }
