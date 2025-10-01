@@ -26,6 +26,12 @@ export default function RootLayout({
       <head>
         {/* Ladda Tailwind CSS via CDN (som i ditt exempel) */}
         <Script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" strategy="beforeInteractive" />
+        {/* Google Model Viewer för 3D-modeller */}
+        <Script
+          type="module"
+          src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"
+          strategy="beforeInteractive"
+        />
       </head>
       {/* Applicera typsnitt och grundläggande stilar på body */}
       <body className={poppins.className}>

@@ -2,10 +2,26 @@
 
 import { useState } from 'react';
 
+interface Model3D {
+  taskId: string;
+  status: string;
+  progress: number;
+  modelUrls?: {
+    glb?: string;
+    fbx?: string;
+    obj?: string;
+    usdz?: string;
+  };
+  thumbnailUrl?: string;
+}
+
 export default function LampDesigner() {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generate3D, setGenerate3D] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [isolatedImage, setIsolatedImage] = useState<string | null>(null);
+  const [model3D, setModel3D] = useState<Model3D | null>(null);
   const [imageDetails, setImageDetails] = useState<{
     style?: string;
     environment?: string;
@@ -25,7 +41,10 @@ export default function LampDesigner() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userPrompt: prompt }),
+        body: JSON.stringify({
+          userPrompt: prompt,
+          generate3D: generate3D
+        }),
       });
 
       const data = await response.json();
@@ -35,11 +54,17 @@ export default function LampDesigner() {
       }
 
       setGeneratedImage(data.image);
+      setIsolatedImage(data.isolatedImage || null);
+      setModel3D(data.model3D || null);
       setImageDetails({
         style: data.style,
         environment: data.environment,
         description: data.description,
       });
+
+      if (data.warning) {
+        console.warn(data.warning);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
@@ -99,6 +124,23 @@ export default function LampDesigner() {
               </div>
             </div>
 
+            <div className="mb-6">
+              <label className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={generate3D}
+                  onChange={(e) => setGenerate3D(e.target.checked)}
+                  className="w-5 h-5 rounded border-gray-300 text-brand-terracotta focus:ring-brand-terracotta"
+                />
+                <span className="text-sm font-medium text-brand-black">
+                  Generate 3D model (adds ~2-3 minutes)
+                </span>
+              </label>
+              <p className="text-xs text-gray-500 ml-8 mt-1">
+                Creates a ready-to-3D-print model in GLB, OBJ, and FBX formats
+              </p>
+            </div>
+
             <button
               onClick={handleGenerate}
               disabled={!prompt.trim() || isGenerating}
@@ -125,36 +167,143 @@ export default function LampDesigner() {
           </div>
 
           {generatedImage && (
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-              <div className="relative aspect-square">
-                <img
-                  src={generatedImage}
-                  alt="Your custom lamp design"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-semibold text-brand-black mb-4">
-                  Your Custom Design
-                </h3>
-                {imageDetails.style && (
-                  <p className="text-gray-600 mb-2">
-                    <span className="font-medium">Style:</span> {imageDetails.style}
-                  </p>
-                )}
-                {imageDetails.environment && (
-                  <p className="text-gray-600 mb-4">
-                    <span className="font-medium">Environment:</span> {imageDetails.environment}
-                  </p>
-                )}
-                <div className="flex gap-4">
-                  <button className="flex-1 bg-brand-terracotta text-white font-semibold py-3 px-6 rounded-full hover:bg-opacity-90 transition-all">
-                    Save to Collection
-                  </button>
-                  <button className="flex-1 bg-brand-sand text-brand-black font-semibold py-3 px-6 rounded-full hover:bg-opacity-80 transition-all">
-                    Share Design
-                  </button>
+            <div className="space-y-6">
+              {/* Scene Image */}
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div className="relative aspect-square">
+                  <img
+                    src={generatedImage}
+                    alt="Your custom lamp design in environment"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
+                <div className="p-8">
+                  <h3 className="text-2xl font-semibold text-brand-black mb-4">
+                    Your Custom Design
+                  </h3>
+                  {imageDetails.style && (
+                    <p className="text-gray-600 mb-2">
+                      <span className="font-medium">Style:</span> {imageDetails.style}
+                    </p>
+                  )}
+                  {imageDetails.environment && (
+                    <p className="text-gray-600 mb-4">
+                      <span className="font-medium">Environment:</span> {imageDetails.environment}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Isolated Lamp Component */}
+              {isolatedImage && (
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                  <div className="relative aspect-square bg-gray-50">
+                    <img
+                      src={isolatedImage}
+                      alt="Isolated lamp component for 3D printing"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="p-8">
+                    <h3 className="text-2xl font-semibold text-brand-black mb-4">
+                      3D-Printable Component
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      Isolated lamp shade structure ready for 3D conversion
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* 3D Model Downloads */}
+              {model3D && model3D.status === 'SUCCEEDED' && (
+                <div className="bg-white rounded-2xl shadow-xl p-8">
+                  <h3 className="text-2xl font-semibold text-brand-black mb-4">
+                    3D Model Ready!
+                  </h3>
+
+                  {model3D.thumbnailUrl && (
+                    <div className="mb-6 rounded-lg overflow-hidden">
+                      <img
+                        src={model3D.thumbnailUrl}
+                        alt="3D model preview"
+                        className="w-full h-auto"
+                      />
+                    </div>
+                  )}
+
+                  <p className="text-gray-600 mb-6">
+                    Your 3D model is ready for download in multiple formats:
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {model3D.modelUrls?.glb && (
+                      <a
+                        href={model3D.modelUrls.glb}
+                        download
+                        className="flex items-center justify-center bg-brand-terracotta text-white font-semibold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all"
+                      >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download GLB
+                      </a>
+                    )}
+                    {model3D.modelUrls?.obj && (
+                      <a
+                        href={model3D.modelUrls.obj}
+                        download
+                        className="flex items-center justify-center bg-brand-terracotta text-white font-semibold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all"
+                      >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download OBJ
+                      </a>
+                    )}
+                    {model3D.modelUrls?.fbx && (
+                      <a
+                        href={model3D.modelUrls.fbx}
+                        download
+                        className="flex items-center justify-center bg-brand-terracotta text-white font-semibold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all"
+                      >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download FBX
+                      </a>
+                    )}
+                    {model3D.modelUrls?.usdz && (
+                      <a
+                        href={model3D.modelUrls.usdz}
+                        download
+                        className="flex items-center justify-center bg-brand-terracotta text-white font-semibold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all"
+                      >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download USDZ
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="mt-6 p-4 bg-brand-sand rounded-lg">
+                    <p className="text-sm text-gray-700">
+                      <strong>Tip:</strong> GLB format is recommended for web viewing and AR.
+                      OBJ and FBX are ideal for 3D printing and editing in CAD software.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-4">
+                <button className="flex-1 bg-brand-terracotta text-white font-semibold py-3 px-6 rounded-full hover:bg-opacity-90 transition-all">
+                  Save to Collection
+                </button>
+                <button className="flex-1 bg-brand-sand text-brand-black font-semibold py-3 px-6 rounded-full hover:bg-opacity-80 transition-all">
+                  Share Design
+                </button>
               </div>
             </div>
           )}

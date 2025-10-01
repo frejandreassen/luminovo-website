@@ -1,12 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import OrderForm from './order-form';
+
+interface Model3D {
+  taskId: string;
+  status: string;
+  progress: number;
+  modelUrls?: {
+    glb?: string;
+    fbx?: string;
+    obj?: string;
+    usdz?: string;
+  };
+  thumbnailUrl?: string;
+}
 
 export default function LampDesignerHero() {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isIsolating, setIsIsolating] = useState(false);
+  const [isGenerating3D, setIsGenerating3D] = useState(false);
+  const [progress3D, setProgress3D] = useState(0);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [isolatedImage, setIsolatedImage] = useState<string | null>(null);
+  const [model3D, setModel3D] = useState<Model3D | null>(null);
   const [imageDetails, setImageDetails] = useState<{
     style?: string;
     environment?: string;
@@ -15,11 +33,43 @@ export default function LampDesignerHero() {
   const [error, setError] = useState<string | null>(null);
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
 
+  // Progress simulering för 3D-generering (0-99% över ~3 minuter)
+  useEffect(() => {
+    if (!isGenerating3D) {
+      setProgress3D(0);
+      return;
+    }
+
+    // Starta från 5% direkt
+    setProgress3D(5);
+
+    // Simulera progress: öka från 5% till 99% över 180 sekunder
+    const totalTime = 180000; // 3 minuter
+    const intervalTime = 1000; // uppdatera varje sekund
+    const progressIncrement = (99 - 5) / (totalTime / intervalTime);
+
+    const interval = setInterval(() => {
+      setProgress3D((prev) => {
+        const next = prev + progressIncrement;
+        return next >= 99 ? 99 : next;
+      });
+    }, intervalTime);
+
+    return () => clearInterval(interval);
+  }, [isGenerating3D]);
+
+  // STEG 1: Generera miljöbild
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
 
+    // Resetta ALLT state för ny generering
     setIsGenerating(true);
+    setIsIsolating(false);
+    setIsGenerating3D(false);
     setError(null);
+    setGeneratedImage(null);
+    setIsolatedImage(null);
+    setModel3D(null);
 
     try {
       const response = await fetch('/api/generate-lampshade', {
@@ -27,7 +77,10 @@ export default function LampDesignerHero() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userPrompt: prompt }),
+        body: JSON.stringify({
+          userPrompt: prompt,
+          generate3D: false
+        }),
       });
 
       const data = await response.json();
@@ -42,10 +95,81 @@ export default function LampDesignerHero() {
         environment: data.environment,
         description: data.description,
       });
+
+      // STEG 2: Automatiskt isolera lampskärmen
+      handleIsolate(data.image);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Något gick fel');
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  // STEG 2: Isolera lampskärmen (automatiskt efter steg 1)
+  const handleIsolate = async (sceneImage: string) => {
+    setIsIsolating(true);
+
+    try {
+      const response = await fetch('/api/isolate-lamp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageData: sceneImage }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Kunde inte isolera lampkomponent');
+      }
+
+      setIsolatedImage(data.image);
+    } catch (err) {
+      console.error('Kunde inte isolera lampkomponent:', err);
+      // Visa inte error till användaren, det är en nice-to-have feature
+    } finally {
+      setIsIsolating(false);
+    }
+  };
+
+  // STEG 3: Skapa 3D-modell (manuellt via knapp)
+  const handleGenerate3D = async () => {
+    if (!isolatedImage) return;
+
+    setIsGenerating3D(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/convert-to-3d', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageData: isolatedImage,
+          waitForCompletion: true
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Kunde inte skapa 3D-modell');
+      }
+
+      console.log('🎲 3D Model Response:', data);
+      console.log('   Task ID:', data.taskId);
+      console.log('   Status:', data.status);
+      console.log('   Model URLs:', data.modelUrls);
+      console.log('   GLB URL:', data.modelUrls?.glb);
+
+      setProgress3D(100);
+      setModel3D(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kunde inte skapa 3D-modell');
+    } finally {
+      setIsGenerating3D(false);
     }
   };
 
@@ -186,28 +310,11 @@ export default function LampDesignerHero() {
               </div>
             </div>
 
-            {/* Höger kolumn - Tom för att låta bakgrundsbilden synas */}
-            <div className="hidden md:block"></div>
-          </div>
-
-          {/* Genererad bild - visas som overlay/modal */}
-          {generatedImage && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-              style={{ backgroundColor: 'rgba(26, 26, 26, 0.8)' }}
-              onClick={() => setGeneratedImage(null)}
-            >
-              <div className="relative w-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
-                <button
-                  onClick={() => setGeneratedImage(null)}
-                  className="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors z-10"
-                  type="button"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-                <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            {/* Genererade bilder och 3D-modeller */}
+            {generatedImage && (
+              <div className="mt-8 w-full max-w-2xl space-y-6">
+                {/* Miljöbild */}
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                   <div className="relative aspect-square">
                     <img
                       src={generatedImage}
@@ -229,21 +336,151 @@ export default function LampDesignerHero() {
                         <span className="font-semibold">Miljö:</span> {imageDetails.environment}
                       </p>
                     )}
-                    <button
-                      onClick={() => setIsOrderFormOpen(true)}
-                      className="w-full text-white font-semibold py-3 px-6 rounded-full transition-all"
-                      style={{ backgroundColor: '#1a1a1a' }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#374151'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1a1a1a'}
-                      type="button"
-                    >
-                      Beställ Nu
-                    </button>
                   </div>
                 </div>
+
+                {/* Isolerad lampkomponent */}
+                {(isolatedImage || isIsolating) && (
+                  <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    {isIsolating ? (
+                      <div className="aspect-square bg-gray-50 flex items-center justify-center">
+                        <div className="text-center">
+                          <svg className="animate-spin h-12 w-12 text-brand-terracotta mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <p className="text-gray-600">Isolerar lampskärm...</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative aspect-square bg-gray-50">
+                        <img
+                          src={isolatedImage!}
+                          alt="Isolerad lampkomponent för 3D-printing"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold text-brand-black mb-3">
+                        3D-Printbar Komponent
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Isolerad lampskärm redo för 3D-konvertering
+                      </p>
+
+                      {isolatedImage && !model3D && !isGenerating3D && (
+                        <button
+                          onClick={handleGenerate3D}
+                          className="w-full font-semibold py-3 px-6 rounded-full transition-all shadow-lg hover:shadow-xl"
+                          style={{
+                            backgroundColor: '#b97b5e',
+                            color: 'white'
+                          }}
+                        >
+                          🎲 Skapa 3D-Modell
+                        </button>
+                      )}
+
+                      {isGenerating3D && (
+                        <div className="w-full">
+                          <div className="bg-brand-sand/30 rounded-lg p-4 mb-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm font-medium text-brand-black">Skapar 3D-modell...</span>
+                              <span className="text-sm font-semibold text-brand-terracotta">{Math.round(progress3D)}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                              <div
+                                className="bg-brand-terracotta h-full rounded-full transition-all duration-1000 ease-linear"
+                                style={{
+                                  width: `${progress3D}%`
+                                }}
+                              ></div>
+                            </div>
+                            <p className="text-xs text-gray-600 mt-2">
+                              Meshy AI konverterar din lampskärm till en 3D-modell. Detta tar normalt 2-3 minuter.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 3D-modell preview */}
+                {model3D && model3D.status === 'SUCCEEDED' && (
+                  <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div className="p-6 pb-0">
+                      <h3 className="text-xl font-semibold text-brand-black mb-2">
+                        Din 3D-Modell 🎉
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Rotera och zooma med musen eller touch
+                      </p>
+                    </div>
+
+                    {/* 3D Preview med model-viewer */}
+                    {model3D.modelUrls?.glb ? (
+                      <div className="bg-gradient-to-b from-gray-50 to-gray-100" style={{height: '500px'}}>
+                        <model-viewer
+                          src={`/api/proxy-glb?url=${encodeURIComponent(model3D.modelUrls.glb)}`}
+                          alt="3D-modell av lampskärm"
+                          auto-rotate
+                          camera-controls
+                          shadow-intensity="1"
+                          environment-image="neutral"
+                          exposure="1"
+                          style={{width: '100%', height: '100%'}}
+                        ></model-viewer>
+                      </div>
+                    ) : model3D.thumbnailUrl ? (
+                      <div className="aspect-square bg-gray-50 flex items-center justify-center">
+                        <img
+                          src={model3D.thumbnailUrl}
+                          alt="3D-modell förhandsgranskning"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-square bg-gray-50 flex items-center justify-center p-8">
+                        <div className="text-center">
+                          <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                          </svg>
+                          <p className="text-gray-600 text-sm">3D-modell genererad</p>
+                          <p className="text-gray-500 text-xs mt-2">Inget format tillgängligt för visning</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="p-6">
+                      <div className="p-4 bg-brand-sand/50 rounded-lg">
+                        <p className="text-sm text-gray-700">
+                          <strong>✨ Din lampskärm är redo!</strong><br/>
+                          <span className="text-xs text-gray-600">
+                            3D-modellen skickas automatiskt till vårt 3D-printföretag när du beställer.
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIsOrderFormOpen(true)}
+                    className="flex-1 bg-brand-black text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-800 transition-all text-sm"
+                  >
+                    Beställ Nu
+                  </button>
+                  <button className="flex-1 bg-brand-sand text-brand-black font-semibold py-2 px-4 rounded-full hover:bg-opacity-80 transition-all text-sm">
+                    Spara Design
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
