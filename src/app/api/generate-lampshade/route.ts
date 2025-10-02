@@ -170,8 +170,8 @@ Svara ENDAST med den färdiga bildprompten på engelska, inget annat. Prompten s
     // STEP 3: Isolate the lamp component from the scene
     console.log('🔍 STEP 3: Isolating lamp component from scene...');
 
-    const isolationConfig = {
-      responseModalities: ['IMAGE'] as const,
+    const isolationConfig: { responseModalities: string[] } = {
+      responseModalities: ['IMAGE'],
     };
 
     const isolationPrompt = `Transform this lamp shade into a clean technical photograph showing ONLY the 3D-printed SKELETAL FRAMEWORK itself, without the light bulb or any environment/furniture. Remove all lighting effects, the bulb, the table/surface, and background. Show just the white PLA plastic struts forming the open wireframe structure on a pure white background with even, shadowless lighting. Keep the exact same skeletal pattern and framework. Orthographic view, centered. This should be just the lamp shade component that can be 3D printed.`;

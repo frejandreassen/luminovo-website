@@ -422,16 +422,20 @@ export default function LampDesignerHero() {
                     {/* 3D Preview med model-viewer */}
                     {model3D.modelUrls?.glb ? (
                       <div className="bg-gradient-to-b from-gray-50 to-gray-100" style={{height: '500px'}}>
-                        <model-viewer
-                          src={`/api/proxy-glb?url=${encodeURIComponent(model3D.modelUrls.glb)}`}
-                          alt="3D-modell av lampskärm"
-                          auto-rotate
-                          camera-controls
-                          shadow-intensity="1"
-                          environment-image="neutral"
-                          exposure="1"
-                          style={{width: '100%', height: '100%'}}
-                        ></model-viewer>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: `<model-viewer
+                              src="/api/proxy-glb?url=${encodeURIComponent(model3D.modelUrls.glb)}"
+                              alt="3D-modell av lampskärm"
+                              auto-rotate
+                              camera-controls
+                              shadow-intensity="1"
+                              environment-image="neutral"
+                              exposure="1"
+                              style="width: 100%; height: 100%"
+                            ></model-viewer>`
+                          }}
+                        />
                       </div>
                     ) : model3D.thumbnailUrl ? (
                       <div className="aspect-square bg-gray-50 flex items-center justify-center">

@@ -45,8 +45,8 @@ export async function POST(request: Request) {
     // Prompt to isolate the lamp component for 3D printing
     const isolationPrompt = `Transform this lamp shade into a clean technical photograph showing ONLY the 3D-printed SKELETAL FRAMEWORK itself, without the light bulb or any environment/furniture. Remove all lighting effects, the bulb, the table/surface, and background. Show just the white PLA plastic struts forming the open wireframe structure on a pure white background with even, shadowless lighting. Keep the exact same skeletal pattern and framework. Orthographic view, centered. This should be just the lamp shade component that can be 3D printed.`;
 
-    const config = {
-      responseModalities: ['IMAGE'] as const,
+    const config: { responseModalities: string[] } = {
+      responseModalities: ['IMAGE'],
     };
 
     const contents = [

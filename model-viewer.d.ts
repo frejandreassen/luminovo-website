@@ -9,6 +9,8 @@ declare namespace JSX {
         'auto-rotate'?: boolean;
         'camera-controls'?: boolean;
         'shadow-intensity'?: string;
+        'environment-image'?: string;
+        exposure?: string;
         ar?: boolean;
         'ar-modes'?: string;
         loading?: 'auto' | 'lazy' | 'eager';
